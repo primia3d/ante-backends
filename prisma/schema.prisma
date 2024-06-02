@@ -1,0 +1,225 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                       String                     @id @unique @default(uuid())
+  email                    String                     @unique @db.VarChar(100)
+  firstName                String                     @db.VarChar(100)
+  lastName                 String                     @db.VarChar(100)
+  contactNumber            String                     @db.VarChar(100)
+  username                 String                     @db.VarChar(100)
+  password                 String                     @db.VarChar(200)
+  key                      Bytes
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  roleId                   String
+  isDeleted                Boolean                    @default(false)
+  role                     Role                       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  accountToken             AccountToken[]
+  parentAccountId          String?
+  children                 Account[]                  @relation("AccountHierarchy")
+  parent                   Account?                   @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  tasks                    Task[]                     @relation("CreatedBy")
+  updatedTasks             Task[]                     @relation("UpdatedBy")
+  assignedTask             Task[]                     @relation("AssignedTo")
+  Collaborators            Collaborators[]
+  TaskWatcher              TaskWatcher[]
+  TaskProjectNotifications TaskProjectNotifications[]
+}
+
+model AccountToken {
+  sessionId String   @id @unique @default(uuid())
+  accountId String
+  payload   String
+  userAgent String
+  token     String   @db.VarChar(100)
+  ipAddress String   @db.VarChar(200)
+  status    String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+
+model RoleGroup {
+  // Schema
+  id          String   @id @unique @default(uuid())
+  name        String   @unique
+  description String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roles Role[]
+}
+
+model Role {
+  id          String   @id @unique @default(uuid())
+  name        String   @unique
+  description String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDeveloper Boolean  @default(false)
+  level       Int      @default(0)
+
+  // Relations
+  users       Account[]
+  roleScopes  RoleScope[]
+  roleGroup   RoleGroup?  @relation(fields: [roleGroupId], references: [id])
+  roleGroupId String?
+
+  // Role Hierarchy
+  parentRole   Role?   @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
+  parentRoleId String?
+  childRoles   Role[]  @relation("RoleHierarchy")
+}
+
+model Scope {
+  id          String      @unique
+  type        ScopeType
+  name        String
+  description String
+  parentID    String?
+  isDeleted   Boolean     @default(false)
+  roleScopes  RoleScope[]
+  parent      Scope?      @relation("Scope", fields: [parentID], references: [id], onDelete: Cascade)
+  Scope       Scope[]     @relation("Scope")
+}
+
+model RoleScope {
+  roleID  String
+  scopeID String
+  role    Role   @relation(fields: [roleID], references: [id], onDelete: Cascade)
+  scope   Scope  @relation(fields: [scopeID], references: [id], onDelete: Cascade)
+
+  @@unique([roleID, scopeID])
+}
+
+enum ScopeType {
+  PAGE
+  FEATURE
+  ACTION
+  WIDGET
+}
+
+model Client {
+  id            String    @id @unique @default(uuid())
+  firstName     String    @db.VarChar(100)
+  lastName      String    @db.VarChar(100)
+  contactNumber String    @db.VarChar(100)
+  email         String    @unique @db.VarChar(100)
+  address       String    @db.VarChar(255)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  isDeleted     Boolean   @default(false)
+  Project       Project[]
+}
+
+enum ProjectStatus {
+  PROJECT
+  LEAD
+}
+
+model Project {
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  description              String
+  budget                   Float
+  clientId                 String
+  startDate                DateTime
+  endDate                  DateTime
+  status                   ProjectStatus              @default(PROJECT)
+  client                   Client                     @relation(fields: [clientId], references: [id])
+  isDeleted                Boolean                    @default(false)
+  Task                     Task[]
+  TaskProjectNotifications TaskProjectNotifications[]
+
+  @@unique([name])
+}
+
+model BoardLane {
+  id          Int      @id @default(autoincrement())
+  order       Int
+  name        String   @unique
+  description String
+  tasks       Task[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
+}
+
+model Task {
+  id                       Int                        @id @default(autoincrement())
+  title                    String
+  description              String
+  createdBy                Account                    @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById              String
+  projectId                Int
+  project                  Project                    @relation(fields: [projectId], references: [id])
+  boardLaneId              Int
+  boardLane                BoardLane                  @relation(fields: [boardLaneId], references: [id])
+  order                    Int
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  updatedBy                Account                    @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedById              String
+  assignedTo               Account?                   @relation("AssignedTo", fields: [assignedToId], references: [id])
+  assignedToId             String?
+  isDeleted                Boolean                    @default(false)
+  dueDate                  DateTime                   @default(now())
+  Collaborators            Collaborators[]
+  TaskWatcher              TaskWatcher[]
+  TaskProjectNotifications TaskProjectNotifications[]
+}
+
+model Collaborators {
+  id        Int      @id @default(autoincrement())
+  taskId    Int?
+  Task      Task?    @relation(fields: [taskId], references: [id])
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id])
+
+  @@unique([taskId, accountId])
+}
+
+model TaskWatcher {
+  id        Int      @id @default(autoincrement())
+  taskId    Int?
+  Task      Task?    @relation(fields: [taskId], references: [id])
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id])
+
+  @@unique([taskId, accountId])
+}
+
+model Notifications {
+  id                       Int                        @id @default(autoincrement())
+  content                  String?
+  TaskProjectNotifications TaskProjectNotifications[]
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+}
+
+model TaskProjectNotifications {
+  id              Int            @id @default(autoincrement())
+  Notifications   Notifications? @relation(fields: [notificationsId], references: [id])
+  notificationsId Int?
+  Account         Account?       @relation(fields: [receiverId], references: [id])
+  receiverId      String?
+  Project         Project?       @relation(fields: [projectId], references: [id])
+  projectId       Int?
+  Task            Task?          @relation(fields: [taskId], references: [id])
+  taskId          Int?
+  hasRead         Boolean        @default(false)
+  isDeleted       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
