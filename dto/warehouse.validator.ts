@@ -17,33 +17,6 @@ export class WarehouseCreateDTO {
   @IsNumber()
   storageCapacity: number;
 
-  @IsNotEmpty()
-  @IsString()
-  forkliftSystem: string;
-
-  @IsNotEmpty()
-  @IsString()
-  rackingSystem: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lighting: string;
-
-  @IsNotEmpty()
-  @IsString()
-  loadingDock: string;
-
-  @IsNotEmpty()
-  @IsString()
-  security: string;
-
-  @IsNotEmpty()
-  @IsString()
-  climateControl: string;
-
-  @IsNotEmpty()
-  @IsString()
-  accessibility: string;
 }
 
 export class WarehouseUpdateDTO {
@@ -62,27 +35,6 @@ export class WarehouseUpdateDTO {
 
   @IsNumber()
   storageCapacity?: number;
-
-  @IsString()
-  forkliftSystem?: string;
-
-  @IsString()
-  rackingSystem?: string;
-
-  @IsString()
-  lighting?: string;
-
-  @IsString()
-  loadingDock?: string;
-
-  @IsString()
-  security?: string;
-
-  @IsString()
-  climateControl?: string;
-
-  @IsString()
-  accessibility?: string;
 }
 
 export class WarehouseReadDTO {

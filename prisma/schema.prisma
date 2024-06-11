@@ -236,13 +236,6 @@ model Warehouse {
   location        String
   size            Float
   storageCapacity Float
-  forkliftSystem  String
-  rackingSystem   String
-  lighting        String
-  loadingDock     String
-  security        String
-  climateControl  String
-  accessibility   String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   isDeleted       Boolean          @default(false)

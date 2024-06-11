@@ -16,7 +16,6 @@ export class WarehouseService {
     this.tableHandler.initialize(query, body, 'warehouse');
     const tableQuery = this.tableHandler.constructTableQuery();
   
-    // Add search filter if provided
     if (query.search) {
       tableQuery['where'] = {
         AND: [
@@ -85,13 +84,6 @@ export class WarehouseService {
         location: true,
         size: true,
         storageCapacity: true,
-        forkliftSystem: true,
-        rackingSystem: true,
-        lighting: true,
-        loadingDock: true,
-        security: true,
-        climateControl: true,
-        accessibility: true,
         isDeleted: true,
         createdAt: true,
         updatedAt: true,
@@ -123,13 +115,6 @@ export class WarehouseService {
       location: warehouseDto.location,
       size: warehouseDto.size,
       storageCapacity: warehouseDto.storageCapacity,
-      forkliftSystem: warehouseDto.forkliftSystem,
-      rackingSystem: warehouseDto.rackingSystem,
-      lighting: warehouseDto.lighting,
-      loadingDock: warehouseDto.loadingDock,
-      security: warehouseDto.security,
-      climateControl: warehouseDto.climateControl,
-      accessibility: warehouseDto.accessibility,
       createdBy: { connect: { id: accountInformation.id } },
       updatedBy: { connect: { id: accountInformation.id } },
     };
