@@ -1,0 +1,43 @@
+{
+    "forkliftSystems": [
+      "Counterbalance Forklift",
+      "Heavy-Duty Forklift",
+      "Side Loader",
+      "Telehandler",
+      "Warehouse Forklift"
+    ],
+    "rackingSystems": [
+      "Adjustable Pallet Racking",
+      "Double Deep Pallet Racking",
+      "Live Pallet Racking",
+      "Mobile Racking"
+    ],
+    "lightings": [
+      "Commercial Panel Lights",
+      "High Bay Lights",
+      "Industrial Strip Lights",
+      "Troffer Lights"
+    ],
+    "loadingDocks": [
+      "Depressed Loading Dock",
+      "Enclosed Dock",
+      "Flush Dock",
+      "Open Dock"
+    ],
+    "securities": [
+      "Alarm System",
+      "CCTV",
+      "Security Guards"
+    ],
+    "climateControls": [
+      "HVAC",
+      "Cooling System",
+      "Heating System"
+    ],
+    "accessibilities": [
+      "Wheelchair Accessible",
+      "Ramp Access",
+      "Elevator Access"
+    ]
+  }
+  
