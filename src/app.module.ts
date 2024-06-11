@@ -30,6 +30,10 @@ import { TaskService } from './task/task.service';
 import { TaskController } from './task/task.controller';
 import { NotificationService } from './notification/notification.service';
 import { NotificationController } from './notification/notification.controller';
+import { OptionsController } from './warehouse/options.controller';
+import { OptionsService } from './warehouse/options.service';
+import { WarehouseController } from './warehouse/warehouse.controller';
+import { WarehouseService } from './warehouse/warehouse.service';
 
 const ENV = process.env.NODE_ENV;
 
@@ -51,6 +55,8 @@ const ENV = process.env.NODE_ENV;
     BoardLaneController,
     TaskController,
     NotificationController,
+    OptionsController,
+    WarehouseController
   ],
   providers: [
     AuthService,
@@ -71,6 +77,8 @@ const ENV = process.env.NODE_ENV;
     TopicService,
     TaskService,
     NotificationService,
+    OptionsService,
+    WarehouseService
   ],
 })
 export class AppModule implements NestModule {

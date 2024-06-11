@@ -55,4 +55,13 @@ export default {
     ],
     search: [{ key: 'name', label: 'Board Lane Name', column: 'name' }],
   },
+  warehouse: {
+    name: 'Warehouse List',
+    prismaKey: 'warehouse',
+    responseRef: 'warehouse',
+    defaultOrderBy: 'createdAt',
+    sort: [{ key: 'name', label: 'Warehouse Name', column: 'name' }],
+    filter: [{ key: 'deleted', label: 'Warehouse Deleted', column: 'isDeleted' }],
+    search: [{ key: 'name', label: 'Warehouse Name', column: 'name' }],
+  },
 };

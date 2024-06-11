@@ -70,4 +70,24 @@ export default {
     description: 'string',
     order: 'number',
   },
+
+  warehouse: { 
+    id: 'string',
+    name: 'string',
+    location: 'string',
+    size: 'number',
+    storageCapacity: 'number',
+    forkliftSystem: 'string',
+    rackingSystem: 'string',
+    lighting: 'string',
+    loadingDock: 'string',
+    security: 'string',
+    climateControl: 'string',
+    accessibility: 'string',
+    createdAt: 'date',
+    updatedAt: 'date',
+    isDeleted: 'boolean',
+    createdBy: 'account',
+    updatedBy: 'account'
+  },
 };
