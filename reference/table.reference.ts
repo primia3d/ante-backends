@@ -64,4 +64,26 @@ export default {
     filter: [{ key: 'deleted', label: 'Warehouse Deleted', column: 'isDeleted' }],
     search: [{ key: 'name', label: 'Warehouse Name', column: 'name' }],
   },
+  generalInventory: {
+    name: 'General Inventory List',
+    prismaKey: 'generalInventory',
+    responseRef: 'generalInventory',
+    defaultOrderBy: 'itemNumber',
+    sort: [{ key: 'itemNumber', label: 'Item Number', column: 'itemNumber' }],
+    filter: [{ key: 'warehouseId', label: 'Warehouse ID', column: 'warehouseId' }],
+    search: [{ key: 'description', label: 'Description', column: 'description' }],
+  },
+  variantInventory: {
+    name: 'Variant Inventory List',
+    prismaKey: 'variantInventory',
+    responseRef: 'variantInventory', 
+    defaultOrderBy: 'itemNumber',
+    sort: [{ key: 'itemNumber', label: 'Item Number', column: 'itemNumber' }],
+    filter: [{ key: 'generalInventoryId', label: 'General Inventory ID', column: 'generalInventoryId' }],
+    search: [
+      { key: 'variationName', label: 'Variation Name', column: 'variationName' },
+      { key: 'variationDescription', label: 'Variation Description', column: 'variationDescription' },
+    ],
+  },
+  
 };

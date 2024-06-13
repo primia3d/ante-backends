@@ -34,6 +34,8 @@ import { OptionsController } from './warehouse/options.controller';
 import { OptionsService } from './warehouse/options.service';
 import { WarehouseController } from './warehouse/warehouse.controller';
 import { WarehouseService } from './warehouse/warehouse.service';
+import { InventoryController } from './inventory/inventory.controller';
+import { InventoryService } from './inventory/inventory.service';
 
 const ENV = process.env.NODE_ENV;
 
@@ -56,7 +58,8 @@ const ENV = process.env.NODE_ENV;
     TaskController,
     NotificationController,
     OptionsController,
-    WarehouseController
+    WarehouseController,
+    InventoryController
   ],
   providers: [
     AuthService,
@@ -78,7 +81,8 @@ const ENV = process.env.NODE_ENV;
     TaskService,
     NotificationService,
     OptionsService,
-    WarehouseService
+    WarehouseService,
+    InventoryService
   ],
 })
 export class AppModule implements NestModule {

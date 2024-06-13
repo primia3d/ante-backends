@@ -12,7 +12,7 @@ export class WarehouseService {
   @Inject() public utility: UtilityService;
   @Inject() public tableHandler: TableHandlerService;
 
-  async searchWarehouseList(query: TableQueryDTO, body: TableBodyDTO, userId: string) {
+  async searchWarehouseList(query: TableQueryDTO, body: TableBodyDTO) {
     this.tableHandler.initialize(query, body, 'warehouse');
     const tableQuery = this.tableHandler.constructTableQuery();
   
@@ -28,10 +28,6 @@ export class WarehouseService {
         ],
       };
     }
-    tableQuery['where'] = {
-      ...tableQuery['where'],
-      createdById: userId,
-    };
     tableQuery['select'] = {
       id: true,
       name: true,
@@ -47,7 +43,7 @@ export class WarehouseService {
   
     return { list, pagination, currentPage };
 }
-  async getWarehouseList(query: TableQueryDTO, body: TableBodyDTO,userId: string) {
+  async getWarehouseList(query: TableQueryDTO, body: TableBodyDTO) {
     this.tableHandler.initialize(query, body, 'warehouse');
     const tableQuery = this.tableHandler.constructTableQuery();
 
@@ -60,8 +56,7 @@ export class WarehouseService {
 
     tableQuery['where'] = {
       AND: [
-        { isDeleted: false },
-        { createdById: userId }, 
+        { isDeleted: false }, 
     ],
     };
 

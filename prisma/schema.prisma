@@ -240,15 +240,15 @@ model Warehouse {
   updatedAt       DateTime         @updatedAt
   isDeleted       Boolean          @default(false)
   generalInventory GeneralInventory[]
-  createdBy                Account                    @relation("CreatedBy", fields: [createdById], references: [id])
+  createdBy                Account @relation("CreatedBy", fields: [createdById], references: [id])
   createdById              String
-  updatedBy                Account                    @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedBy                Account @relation("UpdatedBy", fields: [updatedById], references: [id])
   updatedById              String
 }
 
 model GeneralInventory {
   id              String               @id @unique @default(uuid())
-  itemNumber      String               @unique
+  itemNumber      Float                @unique
   description     String
   warehouseId     String
   warehouse       Warehouse            @relation(fields: [warehouseId], references: [id])
@@ -264,7 +264,7 @@ model GeneralInventory {
 
 model VariationInventory {
   id                String             @id @unique @default(uuid())
-  itemNumber        String
+  itemNumber        Float              @unique
   variationName     String
   variationDescription String
   stocks            Int
@@ -276,9 +276,9 @@ model VariationInventory {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   isDeleted         Boolean            @default(false)
-  createdBy       Account              @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById     String
-  updatedBy       Account              @relation("UpdatedBy", fields: [updatedById], references: [id])
-  updatedById     String
+  createdBy         Account            @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById       String
+  updatedBy         Account            @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedById       String
 }
 
