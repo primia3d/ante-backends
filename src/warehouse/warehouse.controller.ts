@@ -1,12 +1,13 @@
-import { Controller, Post, Body, Res, HttpStatus, Get, Query, Param, } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus, Get, Query, Param, Inject, } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { WarehouseCreateDTO } from 'dto/warehouse.validator';
 import { TableQueryDTO, TableBodyDTO } from 'lib/table.dto/table.dto';
+import { UtilityService } from 'lib/utility.service';
 
 @Controller('warehouse')
 export class WarehouseController {
-  constructor(private readonly warehouseService: WarehouseService) {}
-
+  @Inject() public warehouseService: WarehouseService;
+  @Inject() public utility: UtilityService;
   @Get()
   async getWarehouseList(@Res() response, 
   @Query() query: TableQueryDTO, 
@@ -22,10 +23,11 @@ export class WarehouseController {
         currentPage,
       });
     } catch (error) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        message: 'Error retrieving warehouses',
-        error: error.message,
-      });
+      return this.utility.errorResponse(
+        response,
+        error,
+        'Error Fetching Warehouse List',
+      );
     }
   }
   @Get('search')
@@ -42,10 +44,11 @@ export class WarehouseController {
         data: result,
       });
     } catch (error) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        message: 'Error fetching warehouse list',
-        error: error.message,
-      });
+      return this.utility.errorResponse(
+        response,
+        error,
+        'Error Fetching Warehouse List',
+      );
     }
   }
 
@@ -59,10 +62,11 @@ export class WarehouseController {
         data: warehouse,
       });
     } catch (error) {
-      return response.status(HttpStatus.NOT_FOUND).json({
-        message: 'Warehouse not found',
-        error: error.message,
-      });
+      return this.utility.errorResponse(
+        response,
+        error,
+        'Error Fetching Warehouse List',
+      );
     }
   }
 
@@ -75,14 +79,13 @@ export class WarehouseController {
         data: result,
       });
     } catch (error) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        message: 'Error creating warehouse',
-        error: error.message,
-      });
+      return this.utility.errorResponse(
+        response,
+        error,
+        'Warehouse creation error.',
+      );
     }
   }
 }
-function Req(): (target: WarehouseController, propertyKey: "searchWarehouseList", parameterIndex: 3) => void {
-  throw new Error('Function not implemented.');
-}
+
 
