@@ -12,10 +12,9 @@ export class WarehouseController {
   async getWarehouseList(@Res() response, 
   @Query() query: TableQueryDTO, 
   @Body() body: TableBodyDTO,
-  @Query('createdById') createdById: string,
   ) {
     try {
-      const { list, pagination, currentPage } = await this.warehouseService.getWarehouseList(query, body,createdById);
+      const { list, pagination, currentPage } = await this.warehouseService.getWarehouseList(query, body);
       return response.status(HttpStatus.OK).json({
         message: 'Warehouses retrieved successfully',
         data: list,
@@ -35,10 +34,9 @@ export class WarehouseController {
     @Res() response,
     @Query() query: TableQueryDTO,
     @Body() body: TableBodyDTO,
-    @Query('createdById') createdById: string,
   ) {
     try {   
-      const result = await this.warehouseService.searchWarehouseList(query, body, createdById);   
+      const result = await this.warehouseService.searchWarehouseList(query, body);   
       return response.status(HttpStatus.OK).json({
         message: 'Warehouse list fetched successfully',
         data: result,
