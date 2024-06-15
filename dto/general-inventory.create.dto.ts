@@ -8,12 +8,17 @@ export class CreateGeneralInventoryDTO {
   @IsNotEmpty()
   description: string;
 
-  // @IsUUID()
-  // @IsNotEmpty()
-  // warehouseId: string;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateVariationInventoryDTO)
   variations: CreateVariationInventoryDTO[];
+
+  @IsString()
+  @IsNotEmpty()
+  location: string;
+
+  // @IsString()
+  // tags: string;
+
+
 }

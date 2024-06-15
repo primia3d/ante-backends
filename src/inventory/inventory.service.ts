@@ -37,6 +37,7 @@ export class InventoryService {
       id: true,
       itemNumber: true,
       description: true,
+      location: true,
     };
 
     tableQuery["where"] = {
@@ -94,6 +95,7 @@ export class InventoryService {
       id: true,
       itemNumber: true,
       description: true,
+      location: true,
     };
     const {
       list: baseList,
@@ -207,7 +209,7 @@ export class InventoryService {
     createGeneralInventoryDTO: CreateGeneralInventoryDTO,
     warehouseId: string
   ) {
-    const { description, variations } = createGeneralInventoryDTO;
+    const { description, variations} = createGeneralInventoryDTO;
     const accountInformation = this.utility.accountInformation;
 
     const warehouse = await this.prisma.warehouse.findUnique({
@@ -233,6 +235,7 @@ export class InventoryService {
         itemNumber: newItemNumber,
         description,
         warehouseId: warehouseId,
+        location: warehouse.name,
         createdById: accountInformation.id,
         updatedById: accountInformation.id,
       },
@@ -288,7 +291,7 @@ export class InventoryService {
   private validateCreateGeneralInventoryDTO(
     createGeneralInventoryDTO: CreateGeneralInventoryDTO
   ) {
-    const { description, variations } = createGeneralInventoryDTO;
+    const { description, variations, location } = createGeneralInventoryDTO;
 
     if (
       !description ||
@@ -297,9 +300,17 @@ export class InventoryService {
     ) {
       throw new BadRequestException("Invalid description");
     }
-
+    if (
+      !location ||
+      typeof location !== "string" ||
+      location.trim() === ""
+    ) {
+      throw new BadRequestException("Invalid location");
+    }
+  
+    
     if (!variations || !Array.isArray(variations) || variations.length === 0) {
-      throw new BadRequestException("Variations must be a non-empty array");
+      throw new BadRequestException("At least one variant inventory is required.");
     }
     variations.forEach((variant) => {
       if (

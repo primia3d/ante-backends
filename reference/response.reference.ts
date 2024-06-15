@@ -87,6 +87,7 @@ export default {
     id: 'string',
     itemNumber: 'number',
     description: 'string',
+    location: 'string',
     warehouseId: 'string',
     createdAt: 'date',
     updatedAt: 'date',
