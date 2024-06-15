@@ -13,9 +13,17 @@ export const createDefaultBoardLanes = async () => {
     { name: 'Done', order: 3, description: 'Tasks that have been completed' },
   ];
 
-  for (const lane of defaultBoardLanes) {
-    await prisma.boardLane.create({
-      data: lane,
-    });
+  let checkBoardLanesIfExist = await prisma.boardLane.findMany({
+    where: {
+      OR: defaultBoardLanes.map((boardLane) => ({ name: boardLane.name })),
+    },
+  });
+
+  if (checkBoardLanesIfExist.length === 0) {
+    for (const lane of defaultBoardLanes) {
+      await prisma.boardLane.create({
+        data: lane,
+      });
+    }
   }
 };

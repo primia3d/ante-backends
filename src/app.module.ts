@@ -36,6 +36,9 @@ import { WarehouseController } from './warehouse/warehouse.controller';
 import { WarehouseService } from './warehouse/warehouse.service';
 import { InventoryController } from './inventory/inventory.controller';
 import { InventoryService } from './inventory/inventory.service';
+import { WorkflowManagementService } from './workflow/workflow-management.service';
+import { WorkflowController } from './workflow/workflow.controller';
+import { WorkflowService } from './workflow/workflow.service';
 
 const ENV = process.env.NODE_ENV;
 
@@ -59,7 +62,8 @@ const ENV = process.env.NODE_ENV;
     NotificationController,
     OptionsController,
     WarehouseController,
-    InventoryController
+    InventoryController,
+    WorkflowController,
   ],
   providers: [
     AuthService,
@@ -82,7 +86,9 @@ const ENV = process.env.NODE_ENV;
     NotificationService,
     OptionsService,
     WarehouseService,
-    InventoryService
+    InventoryService,
+    WorkflowManagementService,
+    WorkflowService,
   ],
 })
 export class AppModule implements NestModule {
