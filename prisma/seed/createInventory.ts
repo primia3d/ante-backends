@@ -20,6 +20,7 @@ export const createGeneralAndVariantInventory = async () => {
       itemNumber: 1,
       description: 'General Inventory Description',
       warehouse: { connect: { id: warehouse.id } },
+      location: 'Main warehouse',
       createdBy: { connect: { id: superAdmin.id } },
       updatedBy: { connect: { id: superAdmin.id } },
     },
