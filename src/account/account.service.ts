@@ -206,4 +206,38 @@ export class AccountService {
       },
     };
   }
+
+  async searchAccount(
+    query: TableQueryDTO,
+    body: TableBodyDTO,
+    searchQuery?: string,
+  ) {
+    this.tableHandler.initialize(query, body, 'account');
+    const tableQuery = this.tableHandler.constructTableQuery();
+    tableQuery['relationLoadStrategy'] = 'join';
+    tableQuery['include'] = { role: { include: true } };
+
+    
+    if (searchQuery) {
+      tableQuery['where'] = {
+        OR: [
+          { firstName: { contains: searchQuery, mode: 'insensitive' } },
+          { lastName: { contains: searchQuery, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    const {
+      list: baseList,
+      currentPage,
+      pagination,
+    } = await this.tableHandler.getTableData(
+      this.prisma.account,
+      query,
+      tableQuery,
+    );
+
+    const list = await this.utility.mapFormatData(baseList, 'account');
+    return { list, pagination, currentPage };
+  }
 }
