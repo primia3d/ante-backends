@@ -11,53 +11,53 @@ import {
   HttpStatus,
   Query,
   UsePipes,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   RoleGetDTO,
   RoleCreateDTO,
   RoleUpdateDTO,
   RoleDeleteDTO,
   RoleParentDTO,
-} from 'dto/role.validator.dto';
-import { RoleService } from './role.service';
-import { UtilityService } from 'lib/utility.service';
-import { TableQueryDTO, TableBodyDTO } from 'lib/table.dto/table.dto';
-import { EnsureUniqueLevelOneRolePipe } from 'pipes/unique-role-level-one.pipe';
-@Controller('role')
+} from "dto/role.validator.dto";
+import { RoleService } from "./role.service";
+import { UtilityService } from "lib/utility.service";
+import { TableQueryDTO, TableBodyDTO } from "lib/table.dto/table.dto";
+import { EnsureUniqueLevelOneRolePipe } from "pipes/unique-role-level-one.pipe";
+@Controller("role")
 export class RoleController {
   @Inject() public roleService: RoleService;
   @Inject() public utility: UtilityService;
 
-  @Get('by-group')
+  @Get("by-group")
   async parent(@Res() response, @Query() params: RoleParentDTO) {
     try {
       const list = await this.roleService.getRoleByGroup(params);
       return response.status(HttpStatus.OK).json({
-        message: 'Role successfully fetched.',
+        message: "Role successfully fetched.",
         list,
       });
     } catch (err) {
       return this.utility.errorResponse(
         response,
         err,
-        'Role information cannot be retrieved.',
+        "Role information cannot be retrieved."
       );
     }
   }
 
-  @Get('tree')
+  @Get("tree")
   async tree(@Res() response) {
     try {
       const tree = await this.roleService.getTree();
       return response.status(HttpStatus.OK).json({
-        message: 'Role tree successfully fetched.',
+        message: "Role tree successfully fetched.",
         tree,
       });
     } catch (err) {
       return this.utility.errorResponse(
         response,
         err,
-        'Role information cannot be retrieved.',
+        "Role information cannot be retrieved."
       );
     }
   }
@@ -67,14 +67,14 @@ export class RoleController {
     try {
       const roleInformation = await this.roleService.getRole(params);
       return response.status(HttpStatus.OK).json({
-        message: 'Role successfully fetched.',
+        message: "Role successfully fetched.",
         roleInformation,
       });
     } catch (err) {
       return this.utility.errorResponse(
         response,
         err,
-        'Role information cannot be retrieved.',
+        "Role information cannot be retrieved."
       );
     }
   }
@@ -83,19 +83,19 @@ export class RoleController {
   async table(
     @Res() response,
     @Query() query: TableQueryDTO,
-    @Body() body: TableBodyDTO,
+    @Body() body: TableBodyDTO
   ) {
     try {
       const roleInformation = await this.roleService.roleTable(query, body);
       return response.status(HttpStatus.OK).json({
-        message: 'Role table successfully fetched.',
+        message: "Role table successfully fetched.",
         roleInformation,
       });
     } catch (err) {
       return this.utility.errorResponse(
         response,
         err,
-        'Role table cannot be fetched.',
+        "Role table cannot be fetched."
       );
     }
   }
@@ -105,7 +105,7 @@ export class RoleController {
   async add(@Res() response, @Body() params: RoleCreateDTO) {
     try {
       const newRoleLevel = await this.roleService.calculateRoleLevel(
-        params.parentRoleId,
+        params.parentRoleId
       );
       const adjustedParams = {
         ...params,
@@ -114,11 +114,11 @@ export class RoleController {
 
       const roleInformation = await this.roleService.addRole(adjustedParams);
       return response.status(HttpStatus.OK).json({
-        message: 'Role successfully added.',
+        message: "Role successfully added.",
         roleInformation,
       });
     } catch (err) {
-      return this.utility.errorResponse(response, err, 'Rol create failed.');
+      return this.utility.errorResponse(response, err, "Rol create failed.");
     }
   }
   @Patch()
@@ -126,11 +126,11 @@ export class RoleController {
     try {
       const roleInformation = await this.roleService.updateRole(params);
       return response.status(HttpStatus.OK).json({
-        message: 'Role successfully updated.',
+        message: "Role successfully updated.",
         roleInformation,
       });
     } catch (err) {
-      return this.utility.errorResponse(response, err, 'Role update failed.');
+      return this.utility.errorResponse(response, err, "Role update failed.");
     }
   }
   @Delete()
@@ -138,11 +138,37 @@ export class RoleController {
     try {
       const roleInformation = await this.roleService.deleteRole(params);
       return response.status(HttpStatus.OK).json({
-        message: 'Role successfully deleted.',
+        message: "Role successfully deleted.",
         roleInformation,
       });
     } catch (err) {
-      return this.utility.errorResponse(response, err, 'Role delete failed.');
+      return this.utility.errorResponse(response, err, "Role delete failed.");
+    }
+  }
+
+  @Get("search-role")
+  async searchRole(
+    @Res() response,
+    @Query() query: TableQueryDTO,
+    @Query("searchQuery") searchQuery: string,
+    @Body() body: TableBodyDTO
+  ) {
+    try {
+      const roleInformation = await this.roleService.searchRole(
+        query,
+        body,
+        searchQuery
+      );
+      return response.status(HttpStatus.OK).json({
+        message: "Role table successfully fetched.",
+        roleInformation,
+      });
+    } catch (err) {
+      return this.utility.errorResponse(
+        response,
+        err,
+        "Role table cannot be fetched."
+      );
     }
   }
 }
