@@ -150,4 +150,33 @@ export class ScopeService {
       currentPage,
     };
   }
+
+  async searchScope(
+    query: TableQueryDTO,
+    body: TableBodyDTO,
+    searchQuery?: string,
+  ) {
+    this.tableHandler.initialize(query, body, 'scope');
+    const tableQuery = this.tableHandler.constructTableQuery();
+  
+    if (searchQuery) {
+      tableQuery['where'] = {
+        name: { contains: searchQuery, mode: 'insensitive' },
+      };
+    }
+  
+    const { list, currentPage, pagination } =
+      await this.tableHandler.getTableData(
+        this.prisma.scope,
+        query,
+        tableQuery,
+      );
+  
+    return {
+      list: await this.utility.mapFormatData(list, 'scope'),
+      pagination,
+      currentPage,
+    };
+  }
+  
 }
