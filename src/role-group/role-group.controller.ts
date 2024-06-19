@@ -173,4 +173,31 @@ export class RoleGroupController {
       roleList,
     });
   }
+
+  @Get('search-role-group')
+  async searchRoleGroup(
+    @NestResponse() response: Response,
+    @Query() query: TableQueryDTO,
+    @Query('searchQuery') searchQuery: string,
+    @Body() body: TableBodyDTO,
+  ) {
+    try {
+      const roleGroupInformation = await this.roleGroupService.searchRoleGroup(
+        query,
+        body,
+        searchQuery,
+      );
+      return response.status(HttpStatus.OK).json({
+        message: 'Role Group has been successfully fetched',
+        roleGroupInformation,
+      });
+    } catch (error) {}
+    return this.utilityService.errorResponse(
+      response,
+      error,
+      'Role Group table has error when fetching',
+    );
+  }
+
+  
 }
