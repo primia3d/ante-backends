@@ -26,6 +26,7 @@ import { CombinedTaskResponseInterface } from 'interfaces/task.interface';
 import { PrismaService } from 'lib/prisma.service';
 import { UtilityService } from 'lib/utility.service';
 
+
 @Injectable()
 export class TaskService {
   @Inject() public utilityService: UtilityService;
@@ -378,6 +379,7 @@ export class TaskService {
         select: {
           firstName: true,
           lastName: true,
+          image: true,
         },
       },
       boardLane: {
@@ -391,10 +393,15 @@ export class TaskService {
   return taskList.map(task => ({
     ...task,
     assignedTo: task.assignedTo
-      ? { name: `${task.assignedTo.firstName} ${task.assignedTo.lastName}` }
+      ? {
+          name: `${task.assignedTo.firstName} ${task.assignedTo.lastName}`,
+        }
       : null,
     createdBy: task.createdBy
-      ? { name: `${task.createdBy.firstName} ${task.createdBy.lastName}` }
+      ? {
+          name: `${task.createdBy.firstName} ${task.createdBy.lastName}`,
+          image: task.createdBy.image, 
+        }
       : null,
     boardLane: task.boardLane ? { name: task.boardLane.name } : null,
     timeAgo: formatDistanceToNowStrict(new Date(task.createdAt), { addSuffix: true }),
