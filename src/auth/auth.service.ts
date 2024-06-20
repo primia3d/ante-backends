@@ -94,6 +94,7 @@ export class AuthService {
     developerKey,
     assignedRole = null,
     parentAccountId = null,
+    image = '/images/person01.webp'
   }) {
     if (developerKey != process.env.DEVELOPER_KEY)
       throw new NotFoundException(`Invalid Developer Key`);
@@ -139,6 +140,7 @@ export class AuthService {
       ...(parentAccountId
         ? { parent: { connect: { id: parentAccountId } } }
         : {}),
+      image
     };
 
     const createResponse = await this.prisma.account.create({

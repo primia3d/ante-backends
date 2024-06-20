@@ -9,35 +9,36 @@ datasource db {
 }
 
 model Account {
-  id                       String                     @id @unique @default(uuid())
-  email                    String                     @unique @db.VarChar(100)
-  firstName                String                     @db.VarChar(100)
-  lastName                 String                     @db.VarChar(100)
-  contactNumber            String                     @db.VarChar(100)
-  username                 String                     @db.VarChar(100)
-  password                 String                     @db.VarChar(200)
-  key                      Bytes
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  roleId                   String
-  isDeleted                Boolean                    @default(false)
-  role                     Role                       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  accountToken             AccountToken[]
-  parentAccountId          String?
-  children                 Account[]                  @relation("AccountHierarchy")
-  parent                   Account?                   @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
-  tasks                    Task[]                     @relation("CreatedBy")
-  updatedTasks             Task[]                     @relation("UpdatedBy")
-  assignedTask             Task[]                     @relation("AssignedTo")
-  Collaborators            Collaborators[]
-  TaskWatcher              TaskWatcher[]
-  TaskProjectNotifications TaskProjectNotifications[]
-  warehouses               Warehouse[]                @relation("CreatedBy")
-  updatedWarehouses        Warehouse[]                @relation("UpdatedBy")
-  generalInventories       GeneralInventory[]         @relation("CreatedBy")
-  updatedgeneralInventories GeneralInventory[]        @relation("UpdatedBy")
-  variantInventories       VariationInventory[]       @relation("CreatedBy")
-  updatedvariantInventories VariationInventory[]      @relation("UpdatedBy")
+  id                        String                     @id @unique @default(uuid())
+  email                     String                     @unique @db.VarChar(100)
+  firstName                 String                     @db.VarChar(100)
+  lastName                  String                     @db.VarChar(100)
+  contactNumber             String                     @db.VarChar(100)
+  username                  String                     @db.VarChar(100)
+  password                  String                     @db.VarChar(200)
+  key                       Bytes
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  roleId                    String
+  isDeleted                 Boolean                    @default(false)
+  role                      Role                       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  accountToken              AccountToken[]
+  parentAccountId           String?
+  children                  Account[]                  @relation("AccountHierarchy")
+  parent                    Account?                   @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  tasks                     Task[]                     @relation("CreatedBy")
+  updatedTasks              Task[]                     @relation("UpdatedBy")
+  assignedTask              Task[]                     @relation("AssignedTo")
+  Collaborators             Collaborators[]
+  TaskWatcher               TaskWatcher[]
+  TaskProjectNotifications  TaskProjectNotifications[]
+  warehouses                Warehouse[]                @relation("CreatedBy")
+  updatedWarehouses         Warehouse[]                @relation("UpdatedBy")
+  generalInventories        GeneralInventory[]         @relation("CreatedBy")
+  updatedgeneralInventories GeneralInventory[]         @relation("UpdatedBy")
+  variantInventories        VariationInventory[]       @relation("CreatedBy")
+  updatedvariantInventories VariationInventory[]       @relation("UpdatedBy")
+  image                     String?                    @default("/images/person01.webp")
 }
 
 model AccountToken {
@@ -231,55 +232,54 @@ model TaskProjectNotifications {
 }
 
 model Warehouse {
-  id              String           @id @unique @default(uuid())
-  name            String
-  location        String
-  size            Float
-  storageCapacity Float
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  isDeleted       Boolean          @default(false)
+  id               String             @id @unique @default(uuid())
+  name             String
+  location         String
+  size             Float
+  storageCapacity  Float
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  isDeleted        Boolean            @default(false)
   generalInventory GeneralInventory[]
-  createdBy                Account @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById              String
-  updatedBy                Account @relation("UpdatedBy", fields: [updatedById], references: [id])
-  updatedById              String
+  createdBy        Account            @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById      String
+  updatedBy        Account            @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedById      String
 }
 
 model GeneralInventory {
-  id              String               @id @unique @default(uuid())
-  itemNumber      Float                @unique
-  description     String
-  warehouseId     String
-  warehouse       Warehouse            @relation(fields: [warehouseId], references: [id])
-  location        String               
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
-  isDeleted       Boolean              @default(false)
-  variations      VariationInventory[]
-  createdBy       Account              @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById     String
-  updatedBy       Account              @relation("UpdatedBy", fields: [updatedById], references: [id])
-  updatedById     String
+  id          String               @id @unique @default(uuid())
+  itemNumber  Float                @unique
+  description String
+  warehouseId String
+  warehouse   Warehouse            @relation(fields: [warehouseId], references: [id])
+  location    String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  isDeleted   Boolean              @default(false)
+  variations  VariationInventory[]
+  createdBy   Account              @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById String
+  updatedBy   Account              @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
 }
 
 model VariationInventory {
-  id                String             @id @unique @default(uuid())
-  itemNumber        Float              @unique
-  variationName     String
+  id                   String           @id @unique @default(uuid())
+  itemNumber           Float            @unique
+  variationName        String
   variationDescription String
-  stocks            Int
-  unitOfMeasure     String
-  unitPrice         Float
-  total             Float
-  generalInventoryId String
-  generalInventory  GeneralInventory   @relation(fields: [generalInventoryId], references: [id])
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  isDeleted         Boolean            @default(false)
-  createdBy         Account            @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById       String
-  updatedBy         Account            @relation("UpdatedBy", fields: [updatedById], references: [id])
-  updatedById       String
+  stocks               Int
+  unitOfMeasure        String
+  unitPrice            Float
+  total                Float
+  generalInventoryId   String
+  generalInventory     GeneralInventory @relation(fields: [generalInventoryId], references: [id])
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  isDeleted            Boolean          @default(false)
+  createdBy            Account          @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById          String
+  updatedBy            Account          @relation("UpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String
 }
-
