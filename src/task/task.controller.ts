@@ -7,6 +7,7 @@ import {
   Body,
   Get,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UtilityService } from 'lib/utility.service';
@@ -103,4 +104,25 @@ export class TaskController {
       });
     }
   }
+
+  @Patch('/read')
+  async readTask(
+  @NestResponse() response: Response,
+  @Query('id') taskId: string,
+) {
+  try {
+    const taskInformation = await this.taskService.readTask({ id: taskId });
+    return response.status(HttpStatus.OK).json({
+      message: 'Task successfully read.',
+      taskInformation,
+    });
+  } catch (error) {
+    return response.status(HttpStatus.BAD_REQUEST).json({
+      status: HttpStatus.BAD_REQUEST,
+      error: 'Bad Request',
+      message: error.message,
+    });
+  }
+}
+
 }

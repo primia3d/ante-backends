@@ -402,4 +402,26 @@ export class TaskService {
     });
     return taskInformation;
   }
+
+  async readTask(taskFilter: { id: string }) {
+    const task = await this.getTaskById(taskFilter);
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${taskFilter.id} not found.`);
+    }
+
+    const updateParameters: Prisma.TaskUpdateInput = {
+      isRead: true,
+    };
+
+    const readTask = await this.prisma.task.update({
+      where: { id: task.id },
+      data: updateParameters,
+    });   
+
+    const taskInformation = await this.prisma.task.findUnique({
+      where: readTask,
+    });
+    return taskInformation;  
+  }
 }

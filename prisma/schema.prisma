@@ -184,6 +184,7 @@ model Task {
   Collaborators            Collaborators[]
   TaskWatcher              TaskWatcher[]
   TaskProjectNotifications TaskProjectNotifications[]
+  isRead                   Boolean                    @default(false)
 }
 
 model Collaborators {
