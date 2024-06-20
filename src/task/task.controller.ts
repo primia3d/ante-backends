@@ -8,11 +8,16 @@ import {
   Get,
   Query,
   Patch,
+  Put,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UtilityService } from 'lib/utility.service';
 import { TaskService } from './task.service';
-import { TaskCreateDto, TaskFilterDto } from 'dto/task.validator.dto';
+import {
+  TaskCreateDto,
+  TaskFilterDto,
+  TaskIdDto,
+} from 'dto/task.validator.dto';
 
 @Controller('task')
 export class TaskController {
@@ -107,22 +112,93 @@ export class TaskController {
 
   @Patch('/read')
   async readTask(
-  @NestResponse() response: Response,
-  @Query('id') taskId: string,
-) {
-  try {
-    const taskInformation = await this.taskService.readTask({ id: taskId });
-    return response.status(HttpStatus.OK).json({
-      message: 'Task successfully read.',
-      taskInformation,
-    });
-  } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-      status: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
-      message: error.message,
-    });
+    @NestResponse() response: Response,
+    @Query('id') taskId: string,
+  ) {
+    try {
+      const taskInformation = await this.taskService.readTask({ id: taskId });
+      return response.status(HttpStatus.OK).json({
+        message: 'Task successfully read.',
+        taskInformation,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        status: HttpStatus.BAD_REQUEST,
+        error: 'Bad Request',
+        message: error.message,
+      });
+    }
   }
-}
 
+  @Put('start-task')
+  async startTask(
+    @NestResponse() response: Response,
+    @Body() taskId: TaskIdDto,
+  ) {
+    try {
+      const updatedTaskInformation = await this.taskService.moveTask(
+        taskId,
+        'IN_PROGRESS',
+      );
+
+      return response.status(HttpStatus.OK).json({
+        message: 'Task successfully moved to in Progress.',
+        updatedTaskInformation,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        status: error.response.statusCode,
+        error: 'Bad Request',
+        message: error.message,
+      });
+    }
+  }
+
+  @Put('mark-task-done')
+  async markTaskAsDone(
+    @NestResponse() response: Response,
+    @Body() taskId: TaskIdDto,
+  ) {
+    try {
+      const updatedTaskInformation = await this.taskService.moveTask(
+        taskId,
+        'DONE',
+      );
+
+      return response.status(HttpStatus.OK).json({
+        message: 'Task successfully moved to Done.',
+        updatedTaskInformation,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        status: error.response.statusCode,
+        error: 'Bad Request',
+        message: error.message,
+      });
+    }
+  }
+
+  @Put('move-task-to-backlog')
+  async moveTaskToBacklog(
+    @NestResponse() response: Response,
+    @Body() taskId: TaskIdDto,
+  ) {
+    try {
+      const updatedTaskInformation = await this.taskService.moveTask(
+        taskId,
+        'BACKLOG',
+      );
+
+      return response.status(HttpStatus.OK).json({
+        message: 'Task successfully moved to Backlog.',
+        updatedTaskInformation,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        status: error.response.statusCode,
+        error: 'Bad Request',
+        message: error.message,
+      });
+    }
+  }
 }

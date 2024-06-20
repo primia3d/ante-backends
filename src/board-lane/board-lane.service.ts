@@ -10,12 +10,16 @@ import {
   BoardLaneUpdateDto,
   BoardLaneDeleteDto,
 } from 'dto/board-lane.validator.dto';
-import { BoardLaneInterface } from 'interfaces/boardLane.interface';
+import {
+  BoardLaneInterface,
+  BoardLaneResponseInterface,
+} from 'interfaces/boardLane.interface';
 import { TableBodyDTO, TableQueryDTO } from 'lib/table.dto/table.dto';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { CustomWsException } from 'filters/custom-ws.exception';
 import { TaskInterface } from 'interfaces/task.interface';
+import { defaultBoardLaneData } from 'reference/defaultBoardLanes.reference';
 @Injectable()
 export class BoardLaneService {
   @Inject() public utilityService: UtilityService;
