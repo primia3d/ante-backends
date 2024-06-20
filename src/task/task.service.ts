@@ -2,6 +2,7 @@ import { BoardLaneService } from '@/board-lane/board-lane.service';
 import { NotificationService } from '@/notification/notification.service';
 import { ProjectService } from '@/project/project.service';
 import { SocketService } from '@/socket/socket.service';
+import { formatDistanceToNowStrict } from 'date-fns';
 import {
   Injectable,
   Inject,
@@ -350,22 +351,54 @@ export class TaskService {
 
   async getTaskByLoggedInUser(taskFilter: TaskFilterDto) {
     const { id } = this.utilityService.accountInformation;
-    if (taskFilter.projectId) {
-      taskFilter.projectId = Number(taskFilter.projectId);
-    }
-    const query = {
-      assignedToId: id,
-      isDeleted: false,
-    };
 
-    if (taskFilter.projectId) {
-      query['projectId'] = taskFilter.projectId;
-    }
+  if (taskFilter.projectId) {
+    taskFilter.projectId = Number(taskFilter.projectId);
+  }
 
-    const taskList = await this.prisma.task.findMany({
-      where: query,
-    });
-    return taskList;
+  const query = {
+    assignedToId: id,
+    isDeleted: false,
+  };
+
+  if (taskFilter.projectId) {
+    query['projectId'] = taskFilter.projectId;
+  }
+
+  const taskList = await this.prisma.task.findMany({
+    where: query,
+    include: {
+      assignedTo: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      createdBy: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      boardLane: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return taskList.map(task => ({
+    ...task,
+    assignedTo: task.assignedTo
+      ? { name: `${task.assignedTo.firstName} ${task.assignedTo.lastName}` }
+      : null,
+    createdBy: task.createdBy
+      ? { name: `${task.createdBy.firstName} ${task.createdBy.lastName}` }
+      : null,
+    boardLane: task.boardLane ? { name: task.boardLane.name } : null,
+    timeAgo: formatDistanceToNowStrict(new Date(task.createdAt), { addSuffix: true }),
+  }));
   }
 
   async getUnAssignedTask(taskFilter: TaskFilterDto) {
