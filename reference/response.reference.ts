@@ -9,6 +9,7 @@ export default {
     createdAt: 'date',
     role: 'role',
     parentAccountId: 'string',
+    image: 'string',
   },
   role: {
     id: 'string',

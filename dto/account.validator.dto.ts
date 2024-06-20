@@ -37,6 +37,9 @@ export class AccountCreateDTO {
 
   @IsOptional()
   readonly parentAccountId?: string;
+
+  @IsOptional()
+  readonly image?: string;
 }
 
 export class AccountUpdateDTO {

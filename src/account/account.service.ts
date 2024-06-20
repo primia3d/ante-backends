@@ -58,6 +58,7 @@ export class AccountService {
       developerKey,
       assignedRole,
       parentAccountId: accountData.parentAccountId,
+      image: accountData.image
     });
   }
   async updateAccount(accountData: AccountUpdateDTO) {
