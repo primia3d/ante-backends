@@ -97,4 +97,34 @@ export class RoleGroupService {
 
     return this.utilityService.mapFormatData(roles, 'role');
   }
+
+  async searchRoleGroup(
+    query: TableQueryDTO,
+    body: TableBodyDTO,
+    searchQuery?: string,
+  ) {
+    this.tableHandlerService.initialize(query, body, 'roleGroup');
+    const tableQuery = this.tableHandlerService.constructTableQuery();
+  
+    if (searchQuery) {
+      tableQuery['where'] = {
+        name: { contains: searchQuery, mode: 'insensitive' },
+      };
+    }
+  
+    const {
+      list: baseList,
+      currentPage,
+      pagination,
+    } = await this.tableHandlerService.getTableData(
+      this.prisma.roleGroup,
+      query,
+      tableQuery,
+    );
+  
+    const list = await this.utilityService.mapFormatData(baseList, 'roleGroup');
+  
+    return { list, pagination, currentPage };
+  }
+  
 }

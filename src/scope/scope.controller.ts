@@ -87,4 +87,30 @@ export class ScopeController {
       );
     }
   }
+
+  @Get('search-scope')
+  async searchScope(
+    @Res() response,
+    @Query() query: TableQueryDTO,
+    @Body() body: TableBodyDTO,
+    @Query('searchQuery') searchQuery: string,
+  ) {
+    try {
+      const scopeInformation = await this.scopeService.searchScope(
+        query,
+        body,
+        searchQuery,
+      );
+      return response.status(HttpStatus.OK).json({
+        message: 'Scope table successfully fetched.',
+        scopeInformation,
+      });
+    } catch (err) {
+      return this.utility.errorResponse(
+        response,
+        err,
+        'Scope list cannot be retrieved.',
+      );
+    }
+  }
 }

@@ -203,4 +203,36 @@ export class RoleService {
       return false;
     }
   }
+
+  async searchRole(
+    query: TableQueryDTO,
+    body: TableBodyDTO,
+    searchQuery?: string,
+  ) {
+    this.tableHandler.initialize(query, body, 'role');
+    const tableQuery = this.tableHandler.constructTableQuery();
+    tableQuery['relationLoadStrategy'] = 'join';
+    tableQuery['include'] = { roleScopes: { include: { scope: true } } };
+  
+    if (searchQuery) {
+      tableQuery['where'] = {
+        name: { contains: searchQuery, mode: 'insensitive' },
+      };
+    }
+  
+    const {
+      list: baseList,
+      currentPage,
+      pagination,
+    } = await this.tableHandler.getTableData(
+      this.prisma.role,
+      query,
+      tableQuery,
+    );
+  
+    const list = await this.utility.mapFormatData(baseList, 'role');
+  
+    return { list, pagination, currentPage };
+  }
+  
 }
