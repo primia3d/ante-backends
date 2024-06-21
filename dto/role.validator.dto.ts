@@ -52,4 +52,13 @@ export class RoleUpdateDTO {
   @IsNotEmpty()
   @IsString()
   readonly description: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly scopeIDs: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  readonly roleGroupId: string;
 }

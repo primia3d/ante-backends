@@ -4,7 +4,7 @@ import { TableBodyDTO, TableQueryDTO } from 'lib/table.dto/table.dto';
 import { PrismaService } from 'lib/prisma.service';
 import { TableHandlerService } from 'lib/table.handler/table.handler.service';
 import { UtilityService } from 'lib/utility.service';
-import { RoleCreateDTO } from 'dto/role.validator.dto';
+import { RoleCreateDTO, RoleUpdateDTO } from 'dto/role.validator.dto';
 
 @Injectable()
 export class RoleService {
@@ -145,12 +145,20 @@ export class RoleService {
       await this.prisma.roleScope.create({ data: { roleID, scopeID } });
   }
 
-  async updateRole({ id, name, description }) {
-    const updateRoleData: Prisma.RoleUpdateInput = { id, name, description };
+  async updateRole(roleUpdateDto: RoleUpdateDTO) {
+    const updateRoleData: Prisma.RoleUpdateInput = {
+      id: roleUpdateDto.id,
+      name: roleUpdateDto.description,
+      description: roleUpdateDto.description,
+      roleGroup: { connect: { id: roleUpdateDto.roleGroupId } },
+    };
+
     const updateResponse = await this.prisma.role.update({
-      where: { id },
+      where: { id: roleUpdateDto.id },
       data: updateRoleData,
     });
+
+    await this.updateRoleScopes(roleUpdateDto.id, roleUpdateDto.scopeIDs);
 
     return this.utility.formatData(updateResponse, 'role');
   }
@@ -213,13 +221,13 @@ export class RoleService {
     const tableQuery = this.tableHandler.constructTableQuery();
     tableQuery['relationLoadStrategy'] = 'join';
     tableQuery['include'] = { roleScopes: { include: { scope: true } } };
-  
+
     if (searchQuery) {
       tableQuery['where'] = {
         name: { contains: searchQuery, mode: 'insensitive' },
       };
     }
-  
+
     const {
       list: baseList,
       currentPage,
@@ -229,10 +237,49 @@ export class RoleService {
       query,
       tableQuery,
     );
-  
+
     const list = await this.utility.mapFormatData(baseList, 'role');
-  
+
     return { list, pagination, currentPage };
   }
-  
+
+  /**
+   * Updates the scopes associated with a given role.
+   *
+   * @param {string} roleID - The ID of the role to update.
+   * @param {string[]} scopeIDs - An array of scope IDs to associate with the role.
+   */
+
+  private async updateRoleScopes(roleID: string, scopeIDs: string[]) {
+    const currentRoleScopes = await this.prisma.roleScope.findMany({
+      where: { roleID },
+      select: { scopeID: true },
+    });
+
+    const currentScopeIDs = currentRoleScopes.map((rs) => rs.scopeID);
+
+    const scopeIDsToAdd = scopeIDs.filter(
+      (scopeID) => !currentScopeIDs.includes(scopeID),
+    );
+    const scopeIDsToRemove = currentScopeIDs.filter(
+      (scopeID) => !scopeIDs.includes(scopeID),
+    );
+
+    await this.prisma.$transaction([
+      this.prisma.roleScope.deleteMany({
+        where: {
+          roleID,
+          scopeID: { in: scopeIDsToRemove },
+        },
+      }),
+      ...scopeIDsToAdd.map((scopeID) => {
+        return this.prisma.roleScope.create({
+          data: {
+            roleID,
+            scopeID,
+          },
+        });
+      }),
+    ]);
+  }
 }
