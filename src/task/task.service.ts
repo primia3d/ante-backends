@@ -18,6 +18,7 @@ import {
   TaskCreateDto,
   TaskDeleteDto,
   TaskFilterDto,
+  TaskIdDto,
   TaskUpdateDto,
   TaskWatcherDto,
 } from 'dto/task.validator.dto';
@@ -25,7 +26,6 @@ import { CustomWsException } from 'filters/custom-ws.exception';
 import { CombinedTaskResponseInterface } from 'interfaces/task.interface';
 import { PrismaService } from 'lib/prisma.service';
 import { UtilityService } from 'lib/utility.service';
-
 
 @Injectable()
 export class TaskService {
@@ -353,59 +353,59 @@ export class TaskService {
   async getTaskByLoggedInUser(taskFilter: TaskFilterDto) {
     const { id } = this.utilityService.accountInformation;
 
-  if (taskFilter.projectId) {
-    taskFilter.projectId = Number(taskFilter.projectId);
-  }
+    if (taskFilter.projectId) {
+      taskFilter.projectId = Number(taskFilter.projectId);
+    }
 
-  const query = {
-    assignedToId: id,
-    isDeleted: false,
-  };
+    const query = {
+      assignedToId: id,
+      isDeleted: false,
+    };
 
-  if (taskFilter.projectId) {
-    query['projectId'] = taskFilter.projectId;
-  }
+    if (taskFilter.projectId) {
+      query['projectId'] = taskFilter.projectId;
+    }
 
-  const taskList = await this.prisma.task.findMany({
-    where: query,
-    include: {
-      assignedTo: {
-        select: {
-          firstName: true,
-          lastName: true,
+    const taskList = await this.prisma.task.findMany({
+      where: query,
+      include: {
+        assignedTo: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
         },
-      },
-      createdBy: {
-        select: {
-          firstName: true,
-          lastName: true,
-          image: true,
+        createdBy: {
+          select: {
+            firstName: true,
+            lastName: true,
+            image: true,
+          },
         },
+        boardLane: true,
       },
-      boardLane: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
+    });
 
-  return taskList.map(task => ({
-    ...task,
-    assignedTo: task.assignedTo
-      ? {
-          name: `${task.assignedTo.firstName} ${task.assignedTo.lastName}`,
-        }
-      : null,
-    createdBy: task.createdBy
-      ? {
-          name: `${task.createdBy.firstName} ${task.createdBy.lastName}`,
-          image: task.createdBy.image, 
-        }
-      : null,
-    boardLane: task.boardLane ? { name: task.boardLane.name } : null,
-    timeAgo: formatDistanceToNowStrict(new Date(task.createdAt), { addSuffix: true }),
-  }));
+    const currentDate = new Date();
+
+    return taskList.map((task) => ({
+      ...task,
+      assignedTo: task.assignedTo
+        ? {
+            name: `${task.assignedTo.firstName} ${task.assignedTo.lastName}`,
+          }
+        : null,
+      createdBy: task.createdBy
+        ? {
+            name: `${task.createdBy.firstName} ${task.createdBy.lastName}`,
+            image: task.createdBy.image,
+          }
+        : null,
+      timeAgo: formatDistanceToNowStrict(new Date(task.createdAt), {
+        addSuffix: true,
+      }),
+      isPastDue: task.dueDate ? new Date(task.dueDate) < currentDate : false,
+    }));
   }
 
   async getUnAssignedTask(taskFilter: TaskFilterDto) {
@@ -457,11 +457,40 @@ export class TaskService {
     const readTask = await this.prisma.task.update({
       where: { id: task.id },
       data: updateParameters,
-    });   
+    });
 
     const taskInformation = await this.prisma.task.findUnique({
       where: readTask,
     });
-    return taskInformation;  
+    return taskInformation;
+  }
+
+  async moveTask(taskId: TaskIdDto, keyValue: string) {
+    await this.validateTaskId(taskId.id);
+
+    const boardLaneInformation = await this.prisma.boardLane.findFirst({
+      where: {
+        key: keyValue,
+      },
+    });
+
+    if (!boardLaneInformation)
+      throw new NotFoundException('Board lane not found');
+
+    return await this.prisma.task.update({
+      where: { id: taskId.id },
+      data: {
+        boardLaneId: boardLaneInformation.id,
+      },
+    });
+  }
+
+  private async validateTaskId(id: number): Promise<void> {
+    const taskInformation = await this.prisma.task.findUnique({
+      where: { id },
+    });
+    if (!taskInformation) {
+      throw new NotFoundException('Task Id not found');
+    }
   }
 }
