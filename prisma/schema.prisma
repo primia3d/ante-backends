@@ -189,8 +189,8 @@ model Task {
   TaskWatcher              TaskWatcher[]
   TaskProjectNotifications TaskProjectNotifications[]
   isRead                   Boolean                    @default(false)
-  stateId                  Int
-  state                    WorkflowState              @relation(fields: [stateId], references: [id])
+  stateId                  Int?
+  state                    WorkflowState?             @relation(fields: [stateId], references: [id])
   WorkflowRequest          WorkflowRequest[]
 }
 
@@ -300,6 +300,7 @@ model Workflow {
   states          WorkflowState[]
   transitions     WorkflowTransition[]
   WorkflowRequest WorkflowRequest[]
+  isDeleted       Boolean              @default(false)
 }
 
 model WorkflowState {

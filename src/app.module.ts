@@ -36,6 +36,7 @@ import { WarehouseController } from './warehouse/warehouse.controller';
 import { WarehouseService } from './warehouse/warehouse.service';
 import { InventoryController } from './inventory/inventory.controller';
 import { InventoryService } from './inventory/inventory.service';
+import { WorkflowModule } from './workflow/workflow.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -45,6 +46,7 @@ const ENV = process.env.NODE_ENV;
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
     }),
     SocketModule,
+    WorkflowModule,
   ],
   controllers: [
     AuthController,
@@ -59,7 +61,7 @@ const ENV = process.env.NODE_ENV;
     NotificationController,
     OptionsController,
     WarehouseController,
-    InventoryController
+    InventoryController,
   ],
   providers: [
     AuthService,
@@ -82,8 +84,9 @@ const ENV = process.env.NODE_ENV;
     NotificationService,
     OptionsService,
     WarehouseService,
-    InventoryService
+    InventoryService,
   ],
+  exports: [UtilityService, PrismaService, TableHandlerService, LoggingService],
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {

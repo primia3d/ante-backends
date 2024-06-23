@@ -72,7 +72,7 @@ export default {
     order: 'number',
   },
 
-  warehouse: { 
+  warehouse: {
     id: 'string',
     name: 'string',
     location: 'string',
@@ -82,7 +82,7 @@ export default {
     updatedAt: 'date',
     isDeleted: 'boolean',
     createdBy: 'account',
-    updatedBy: 'account'
+    updatedBy: 'account',
   },
   generalInventory: {
     id: 'string',
@@ -95,7 +95,7 @@ export default {
     isDeleted: 'boolean',
     createdBy: 'account',
     updatedBy: 'account',
-  }, 
+  },
   variantInventory: {
     id: 'string',
     itemNumber: 'number',
@@ -113,5 +113,14 @@ export default {
     isDeleted: 'boolean',
     createdBy: 'account',
     updatedBy: 'account',
+  },
+
+  workflow: {
+    id: 'number',
+    description: 'string',
+    name: 'string',
+    createdAt: 'date',
+    updatedAt: 'date',
+    isDeleted: 'boolean',
   },
 };
