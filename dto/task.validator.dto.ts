@@ -45,13 +45,17 @@ export class TaskUpdateDto {
   @IsNumber()
   readonly id: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly updatedById: string;
+
+  @IsOptional()
+  @IsString()
+  readonly description: string;
 }
 
 export class TaskDeleteDto {

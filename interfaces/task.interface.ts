@@ -14,6 +14,7 @@ export interface TaskInterface {
   updatedById: string;
   isDeleted: boolean;
   assignedToId?: string;
+  isRead: boolean;
 }
 
 export interface ProjectOfTaskInterface {

@@ -23,7 +23,10 @@ import {
   TaskWatcherDto,
 } from 'dto/task.validator.dto';
 import { CustomWsException } from 'filters/custom-ws.exception';
-import { CombinedTaskResponseInterface } from 'interfaces/task.interface';
+import {
+  CombinedTaskResponseInterface,
+  TaskInterface,
+} from 'interfaces/task.interface';
 import { PrismaService } from 'lib/prisma.service';
 import { UtilityService } from 'lib/utility.service';
 
@@ -492,5 +495,27 @@ export class TaskService {
     if (!taskInformation) {
       throw new NotFoundException('Task Id not found');
     }
+  }
+
+  async editTaskInformation(
+    taskUpdateDto: TaskUpdateDto,
+  ): Promise<TaskInterface> {
+    await this.validateTaskId(taskUpdateDto.id);
+    const updateTaskData: Prisma.TaskUpdateInput = {
+      title: taskUpdateDto.title,
+      description: taskUpdateDto.description,
+      updatedBy: {
+        connect: {
+          id: this.utilityService.accountInformation.id,
+        },
+      },
+    };
+
+    const updatedTaskInformation = await this.prisma.task.update({
+      where: { id: taskUpdateDto.id },
+      data: updateTaskData,
+    });
+
+    return updatedTaskInformation;
   }
 }
