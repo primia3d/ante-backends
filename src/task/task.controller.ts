@@ -19,8 +19,6 @@ import {
   TaskIdDto,
   TaskUpdateDto,
 } from 'dto/task.validator.dto';
-import { ApiResponseInterface } from 'interfaces/api.response.interface';
-import { TaskInterface } from 'interfaces/task.interface';
 
 @Controller('task')
 export class TaskController {
