@@ -17,7 +17,10 @@ import {
   TaskCreateDto,
   TaskFilterDto,
   TaskIdDto,
+  TaskUpdateDto,
 } from 'dto/task.validator.dto';
+import { ApiResponseInterface } from 'interfaces/api.response.interface';
+import { TaskInterface } from 'interfaces/task.interface';
 
 @Controller('task')
 export class TaskController {
@@ -191,6 +194,28 @@ export class TaskController {
 
       return response.status(HttpStatus.OK).json({
         message: 'Task successfully moved to Backlog.',
+        updatedTaskInformation,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        status: error.response.statusCode,
+        error: 'Bad Request',
+        message: error.message,
+      });
+    }
+  }
+
+  @Put('update-task')
+  async updateTaskInformation(
+    @NestResponse() response: Response,
+    @Body() taskUpdateDto: TaskUpdateDto,
+  ) {
+    try {
+      const updatedTaskInformation =
+        await this.taskService.editTaskInformation(taskUpdateDto);
+
+      return response.status(HttpStatus.OK).json({
+        message: 'Task information has been successfully updated',
         updatedTaskInformation,
       });
     } catch (error) {
