@@ -1,11 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsArray,
-  IsDateString,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class WorkflowCreateDto {
   @IsNotEmpty()
@@ -28,11 +21,11 @@ export class WorkflowUpdateDto {
   @IsNumber()
   readonly id: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly description: string;
 }

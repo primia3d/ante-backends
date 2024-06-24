@@ -20,7 +20,6 @@ import {
   WorkflowIdDto,
   WorkflowUpdateDto,
 } from '../../dto/workflow.validator.dto';
-import { UpdateWorkflowDto } from '../../dto/update-workflow.dto';
 import { TableBodyDTO, TableQueryDTO } from 'lib/table.dto/table.dto';
 
 @Controller('workflow')
@@ -34,7 +33,7 @@ export class WorkflowController {
   ) {
     try {
       const newWorkflow = await this.workflowService.create(parameters);
-      response.status(HttpStatus.CREATED).json({
+      return response.status(HttpStatus.CREATED).json({
         message: 'Workflow has been created successfully',
         workflowInformation: newWorkflow,
       });

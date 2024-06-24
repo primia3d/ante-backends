@@ -114,7 +114,6 @@ export default {
     createdBy: 'account',
     updatedBy: 'account',
   },
-
   workflow: {
     id: 'number',
     description: 'string',
@@ -122,5 +121,19 @@ export default {
     createdAt: 'date',
     updatedAt: 'date',
     isDeleted: 'boolean',
+  },
+  workflowStateType: {
+    id: 'number',
+    description: 'string',
+    title: 'string',
+  },
+  workflowState: {
+    id: 'number',
+    name: 'string',
+    description: 'string',
+    workflowId: 'number',
+    workflowStateTypeId: 'number',
+    workflow: 'workflow',
+    workflowStateType: 'workflowStateType',
   },
 };

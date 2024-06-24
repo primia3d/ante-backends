@@ -304,15 +304,27 @@ model Workflow {
 }
 
 model WorkflowState {
-  id                  Int                  @id @default(autoincrement())
+  id                  Int                     @id @default(autoincrement())
   name                String
   description         String
   workflowId          Int
-  workflow            Workflow             @relation(fields: [workflowId], references: [id])
+  workflow            Workflow                @relation(fields: [workflowId], references: [id])
   tasks               Task[]
-  outgoingTransitions WorkflowTransition[] @relation("FromState")
-  incomingTransitions WorkflowTransition[] @relation("ToState")
+  outgoingTransitions WorkflowTransition[]    @relation("FromState")
+  incomingTransitions WorkflowTransition[]    @relation("ToState")
   WorkflowRequest     WorkflowRequest[]
+  workflowStateType   WorkflowStateTypeStatic @relation(fields: [workflowStateTypeId], references: [id])
+  workflowStateTypeId Int
+
+  @@index([workflowId])
+  @@index([workflowStateTypeId])
+}
+
+model WorkflowStateTypeStatic {
+  id            Int             @id @default(autoincrement())
+  type          String          @unique
+  description   String?
+  workflowState WorkflowState[]
 }
 
 model WorkflowTransition {
@@ -372,6 +384,6 @@ model WorkflowRequestData {
   id        Int             @id @default(autoincrement())
   requestId Int
   key       String
-  value     Json
+  value     Json?
   request   WorkflowRequest @relation(fields: [requestId], references: [id])
 }

@@ -1,15 +1,9 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   WorkflowCreateDto,
   WorkflowIdDto,
   WorkflowUpdateDto,
 } from '../../dto/workflow.validator.dto';
-import { UpdateWorkflowDto } from '../../dto/update-workflow.dto';
 import { UtilityService } from 'lib/utility.service';
 import { PrismaService } from 'lib/prisma.service';
 import { TableHandlerService } from 'lib/table.handler/table.handler.service';
@@ -89,14 +83,44 @@ export class WorkflowService {
     );
   }
 
-  private async validateWorkflowId(id: number) {
-    const workflowInformation = await this.prisma.workflow.findFirst({
+  private async validateEntityById<T>(
+    id: number,
+    entity: {
+      findFirst: (args: { where: { id: number } }) => Promise<T | null>;
+    },
+    errorMessage: string,
+  ) {
+    const entityInformation = await entity.findFirst({
       where: { id },
     });
 
-    if (!workflowInformation) {
-      throw new NotFoundException('Workflow Information is not existing');
+    if (!entityInformation) {
+      throw new NotFoundException(errorMessage);
     }
     return true;
+  }
+
+  protected async validateWorkflowId(id: number) {
+    return this.validateEntityById(
+      id,
+      this.prisma.workflow,
+      'Workflow Information is not existing',
+    );
+  }
+
+  protected async validateWorkflowStateTypeId(id: number) {
+    return this.validateEntityById(
+      id,
+      this.prisma.workflowStateTypeStatic,
+      'State Type Information is not existing',
+    );
+  }
+
+  protected async validateWorkflowStateId(id: number) {
+    return this.validateEntityById(
+      id,
+      this.prisma.workflowState,
+      'State Information is not existing',
+    );
   }
 }
